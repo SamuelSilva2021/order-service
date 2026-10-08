@@ -1,0 +1,7 @@
+namespace OrderService.Infrastructure.Auth;
+
+public static class JwtClaimNames
+{
+    public const string Subject = "sub";
+    public const string Role = "role";
+}
