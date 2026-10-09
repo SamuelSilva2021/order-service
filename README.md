@@ -98,7 +98,7 @@ curl -s -X POST http://localhost:8080/orders \
 | 409 | Estoque insuficiente, transição de estado inválida ou conflito de concorrência (repetir a chamada) |
 | 422 | Demais regras de negócio violadas (ex.: moeda diferente da do produto) |
 
-Erros seguem o formato `application/problem+json`.
+Erros seguem o formato `application/problem+json`, com títulos e mensagens em português (ver [decisions.md](docs/decisions.md#idioma-das-respostas)).
 
 ## Estrutura
 
