@@ -102,6 +102,25 @@ Validação em duas camadas, cada uma no seu papel: FluentValidation valida **o 
 
 Produto inexistente no payload retorna 400 (e não 404), porque o recurso inválido está no corpo da requisição, não na rota.
 
+## Idioma das respostas
+
+Todas as mensagens devolvidas ao usuário pela API estão em **português**. Como o projeto não tem recursos de tradução (arquivos `.resx`, `IStringLocalizer`, troca de cultura por requisição), as mensagens são escritas diretamente em português, no ponto em que nascem:
+
+| Origem | Onde |
+|---|---|
+| Invariantes do domínio | Mensagens das `DomainException` e derivadas |
+| Validação de entrada | `.WithMessage(...)` explícito em cada regra do FluentValidation |
+| Erros de aplicação | `NotFoundException`, `ForbiddenException`, `InvalidCredentialsException` e `ConcurrencyConflictException` |
+| Títulos dos erros | Constantes em `ProblemTitles`, usadas pelo `GlobalExceptionHandler` e pelo mapeamento de erros do ASP.NET |
+| Erros do framework (binding, JSON inválido, 404/405/415) | `PortugueseMessagesExtensions`, que traduz as mensagens de model binding e substitui os erros de desserialização por "O corpo da requisição é inválido." |
+
+Pontos de projeto:
+- A obrigatoriedade de campos é validada pelo FluentValidation. Por isso o `[Required]` implícito para tipos de referência não anuláveis do ASP.NET está desligado (`SuppressImplicitRequiredAttributeForNonNullableReferenceTypes`): ele geraria mensagens em inglês, vindas do framework.
+- Os **identificadores do contrato** continuam em inglês e não são traduzidos: nomes de campos JSON e de parâmetros (`customerId`, `items`...), valores de enum (`Placed`, `Confirmed`...) e rotas. Traduzi-los quebraria o contrato definido no enunciado.
+- Dados de exemplo do seed (nomes dos produtos) e o Swagger UI não fazem parte das respostas da API e ficaram como estão.
+- Se um dia o idioma precisar variar por cliente, o caminho é concentrar as mensagens em recursos localizados. Hoje elas já estão concentradas em poucos pontos, o que torna essa migração mecânica.
+- Os testes de integração (`PortugueseResponsesTests`) fixam as mensagens principais de cada tipo de erro, para que uma mensagem em inglês não volte sem ser notada.
+
 ## Operação
 
 - `docker compose up` sobe PostgreSQL (com healthcheck) e a API, que só inicia depois do banco saudável.
