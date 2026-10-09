@@ -35,20 +35,23 @@ dotnet test
 
 | Projeto | O que cobre |
 |---|---|
-| `OrderService.Domain.Tests` | Invariantes e transições de `Order`, `OrderItem`, `Product` e `Currency` |
-| `OrderService.Application.Tests` | Casos de uso (criar, confirmar, cancelar) com dependências substituídas |
-| `OrderService.Api.IntegrationTests` | API completa contra um PostgreSQL real (Testcontainers), incluindo JWT, idempotência e concorrência |
+| `OrderService.Domain.Tests` | Invariantes e transições de `Order`, `OrderItem`, `Product`, `Currency` e `User` |
+| `OrderService.Application.Tests` | Casos de uso (pedidos e login) e regra de posse por cliente, com dependências substituídas |
+| `OrderService.Api.IntegrationTests` | API completa contra um PostgreSQL real (Testcontainers), incluindo JWT, posse por cliente, idempotência, concorrência e o hasher de senha |
 
 Os testes de integração precisam do **Docker em execução**: eles sobem um container PostgreSQL descartável.
 
 ## Usando a API
 
-Usuários de demonstração (configuráveis em `appsettings.json`, seção `Auth`):
+Usuários de demonstração (tabela `users`, criados pela migration com a senha em hash PBKDF2):
 
 | Usuário | Senha | Perfil | Permissões |
 |---|---|---|---|
 | `admin` | `admin123` | Admin | Tudo, inclusive cadastrar produtos |
-| `customer` | `customer123` | Customer | Pedidos e consulta de produtos |
+| `customer` | `customer123` | Customer | Pedidos do cliente `customer-001` e consulta de produtos |
+| `customer2` | `customer123` | Customer | Pedidos do cliente `customer-002` e consulta de produtos |
+
+O token traz o perfil e, para clientes, a claim `customer_id`. Um **Customer** só cria pedidos para o seu próprio `customerId` (403 caso contrário), só enxerga, confirma e cancela os seus pedidos (404 nos de outros) e a listagem é sempre restrita aos seus pedidos. O **Admin** age em nome de qualquer cliente.
 
 Produtos do seed:
 
@@ -64,7 +67,7 @@ Produtos do seed:
 
 | Método | Rota | Acesso | Descrição |
 |---|---|---|---|
-| POST | `/auth/token` | Público | Emite o JWT |
+| POST | `/auth/token` | Público | Emite o JWT (usuário e senha) |
 | POST | `/products` | Admin | Cadastra produto |
 | GET | `/products?page=&pageSize=` | Autenticado | Lista produtos paginados |
 | POST | `/orders` | Autenticado | Cria pedido (nasce `Placed`) |
@@ -90,8 +93,8 @@ curl -s -X POST http://localhost:8080/orders \
 | Código | Quando |
 |---|---|
 | 400 | Payload inválido, produto inexistente, filtros ou paginação inválidos |
-| 401 / 403 | Sem token / sem permissão |
-| 404 | Pedido inexistente |
+| 401 / 403 | Sem token ou credenciais inválidas / sem permissão (inclui Customer operando em nome de outro cliente) |
+| 404 | Pedido inexistente ou pertencente a outro cliente |
 | 409 | Estoque insuficiente, transição de estado inválida ou conflito de concorrência (repetir a chamada) |
 | 422 | Demais regras de negócio violadas (ex.: moeda diferente da do produto) |
 

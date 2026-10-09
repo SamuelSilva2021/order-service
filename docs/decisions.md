@@ -74,9 +74,15 @@ Duas confirmações simultâneas disputando o mesmo estoque não podem vender a 
 ## Segurança
 
 - JWT Bearer (HMAC-SHA256) emitido em `POST /auth/token`. Chave, emissor e audiência vêm de configuração e são validados na subida (`ValidateOnStart`).
-- Dois perfis: `Admin` (cadastra produtos) e `Customer`. Todo o resto exige apenas autenticação.
-- Usuários vêm da configuração (`Auth:Users`) e a senha é comparada em tempo constante. **É uma escolha consciente para demonstração**: o escopo do enunciado é "autenticação via JWT" e não gestão de identidade. Em produção, seria um provedor de identidade ou uma tabela de usuários com hash de senha, e a chave JWT viria de um cofre de segredos.
-- Não há restrição de "cada cliente só vê os próprios pedidos": o `customerId` é um dado do payload, sem vínculo com o token. Seria o próximo passo natural.
+- Usuários e papéis existem só para viabilizar autenticação; gestão de identidade está fora do escopo por se tratar de um projeto teste.
+- Tabela `users` (`Username` único, `PasswordHash`, `Role`, `CustomerId`), populada pelo seed da migration. `Role` é um enum (`Admin`, `Customer`) gravado como texto; não há tabela de papéis nem ASP.NET Identity, que trariam muito mais do que o enunciado pede.
+- Senhas guardadas com PBKDF2-HMAC-SHA256, salt aleatório por usuário e 600 mil iterações (recomendação OWASP), no formato `v1.<iterações>.<salt>.<hash>`, que permite aumentar o custo no futuro. A comparação é em tempo constante. Quando o usuário não existe, o login executa o mesmo trabalho de derivação, para que o tempo de resposta não revele quais usernames existem.
+- O seed usa hashes pré-calculados com salt fixo, para a migration ser determinística. Um teste confirma que eles correspondem às senhas documentadas no README. Em produção, a chave JWT viria de um cofre de segredos e os usuários de um provedor de identidade.
+- Perfis: `Admin` cadastra produtos e age em nome de qualquer cliente; `Customer` opera apenas sobre o seu `customerId`.
+- O `customerId` do usuário vai para o token na claim `customer_id`. A regra de posse fica em `OrderAccessPolicy`, na camada Application, e depende apenas da abstração `ICurrentUser` (implementada na Api a partir das claims):
+  - criar pedido para outro cliente: **403**;
+  - consultar, confirmar ou cancelar pedido de outro cliente: **404**, para não revelar a existência do pedido;
+  - listar: sempre restrito ao próprio cliente; pedir o `customerId` de outro retorna 403.
 
 ## Tratamento de erros
 
@@ -87,6 +93,7 @@ Um único `IExceptionHandler` converte exceções em `application/problem+json`.
 | `ValidationException` (FluentValidation) | 400 |
 | `NotFoundException` | 404 |
 | `InvalidCredentialsException` | 401 |
+| `ForbiddenException` | 403 |
 | `InsufficientStockException`, `InvalidOrderTransitionException`, `ConcurrencyConflictException` | 409 |
 | Demais `DomainException` | 422 |
 | Qualquer outra | 500 (detalhes só no log) |
@@ -111,4 +118,4 @@ Produto inexistente no payload retorna 400 (e não 404), porque o recurso invál
 
 ## Fora de escopo (conscientemente)
 
-Refresh token e gestão de usuários, restrição de pedidos por dono, `Idempotency-Key` em `POST /orders`, edição de pedido, outbox/eventos, observabilidade (métricas/tracing) e cache.
+Refresh token, cadastro e gestão de usuários e papéis, `Idempotency-Key` em `POST /orders`, edição de pedido, outbox/eventos, observabilidade (métricas/tracing) e cache.
