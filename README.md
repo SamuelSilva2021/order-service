@@ -25,7 +25,13 @@ docker compose up -d db
 dotnet run --project src/OrderService.Api
 ```
 
-A API sobe em http://localhost:5080/swagger. A connection string padrão (`appsettings.json`) aponta para `localhost:5432`.
+A API sobe em http://localhost:5080/swagger. A connection string padrão (`appsettings.json`) aponta para `localhost:5432` com o usuário e a senha do `docker-compose.yml`.
+
+Para usar outro PostgreSQL (por exemplo, um instalado na sua máquina) sem alterar arquivos versionados, guarde a connection string nos *user secrets*:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5432;Database=meu_banco;Username=postgres;Password=sua_senha" --project src/OrderService.Api
+```
 
 ## Testes
 
