@@ -111,7 +111,9 @@ public class PortugueseResponsesTests(ApiFixture fixture)
 
         var response = await admin.ConfirmAsync(order.Id);
 
-        Assert.Contains("não pode passar de", await BodyOf(response));
+        var body = await BodyOf(response);
+        Assert.Contains("não pode passar de Cancelado para Confirmado.", body);
+        Assert.DoesNotContain("Canceled", body);
     }
 
     [Fact]

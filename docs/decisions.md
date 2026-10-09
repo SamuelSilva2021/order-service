@@ -117,6 +117,7 @@ Todas as mensagens devolvidas ao usuário pela API estão em **português**. Com
 Pontos de projeto:
 - A obrigatoriedade de campos é validada pelo FluentValidation. Por isso o `[Required]` implícito para tipos de referência não anuláveis do ASP.NET está desligado (`SuppressImplicitRequiredAttributeForNonNullableReferenceTypes`): ele geraria mensagens em inglês, vindas do framework.
 - Os **identificadores do contrato** continuam em inglês e não são traduzidos: nomes de campos JSON e de parâmetros (`customerId`, `items`...), valores de enum (`Placed`, `Confirmed`...) e rotas. Traduzi-los quebraria o contrato definido no enunciado.
+- Valores de enum usados dentro de mensagens são traduzidos (`OrderStatusExtensions.ToDisplayName`: "Cancelado", "Confirmado"...). Interpolar o enum direto exibiria o nome em inglês; por isso mensagens com status passam sempre por essa extensão.
 - Dados de exemplo do seed (nomes dos produtos) e o Swagger UI não fazem parte das respostas da API e ficaram como estão.
 - Se um dia o idioma precisar variar por cliente, o caminho é concentrar as mensagens em recursos localizados. Hoje elas já estão concentradas em poucos pontos, o que torna essa migração mecânica.
 - Os testes de integração (`PortugueseResponsesTests`) fixam as mensagens principais de cada tipo de erro, para que uma mensagem em inglês não volte sem ser notada.
