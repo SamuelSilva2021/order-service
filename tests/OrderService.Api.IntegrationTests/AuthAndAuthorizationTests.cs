@@ -77,7 +77,7 @@ public class AuthAndAuthorizationTests(ApiFixture fixture)
         var customer = await fixture.CreateCustomerAsync();
         var product = await admin.CreateProductAsync(availableQuantity: 5);
 
-        var order = await customer.PlaceOrderOkAsync(Guid.NewGuid().ToString(), (product.Id, 1));
+        var order = await customer.PlaceOrderOkAsync(ApiFixture.CustomerOneId, (product.Id, 1));
 
         Assert.Equal(OrderService.Domain.Orders.OrderStatus.Placed, order.Status);
     }

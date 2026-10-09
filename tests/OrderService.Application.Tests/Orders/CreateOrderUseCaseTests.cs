@@ -18,8 +18,11 @@ public class CreateOrderUseCaseTests
 
     public CreateOrderUseCaseTests()
     {
-        useCase = new CreateOrderUseCase(orders, products, unitOfWork, new CreateOrderValidator(), TimeProvider.System);
+        useCase = CreateUseCase(FakeCurrentUser.Admin);
     }
+
+    private CreateOrderUseCase CreateUseCase(ICurrentUser user) =>
+        new(orders, products, unitOfWork, new CreateOrderValidator(), new OrderAccessPolicy(user), TimeProvider.System);
 
     private void CatalogContains(params Product[] catalog) =>
         products.GetByIdsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())

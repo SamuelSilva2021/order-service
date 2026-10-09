@@ -17,8 +17,11 @@ public class CancelOrderUseCaseTests
 
     public CancelOrderUseCaseTests()
     {
-        useCase = new CancelOrderUseCase(orders, new OrderStockService(products), unitOfWork);
+        useCase = CreateUseCase(FakeCurrentUser.Admin);
     }
+
+    private CancelOrderUseCase CreateUseCase(ICurrentUser user) =>
+        new(orders, new OrderStockService(products), new OrderAccessPolicy(user), unitOfWork);
 
     private void Stored(Order order, params Product[] catalog)
     {

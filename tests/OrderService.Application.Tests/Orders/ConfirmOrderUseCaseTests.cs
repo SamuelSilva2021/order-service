@@ -17,8 +17,11 @@ public class ConfirmOrderUseCaseTests
 
     public ConfirmOrderUseCaseTests()
     {
-        useCase = new ConfirmOrderUseCase(orders, new OrderStockService(products), unitOfWork);
+        useCase = CreateUseCase(FakeCurrentUser.Admin);
     }
+
+    private ConfirmOrderUseCase CreateUseCase(ICurrentUser user) =>
+        new(orders, new OrderStockService(products), new OrderAccessPolicy(user), unitOfWork);
 
     private void Stored(Order order, params Product[] catalog)
     {

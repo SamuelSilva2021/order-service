@@ -19,12 +19,20 @@ public sealed class ApiClient(HttpClient http)
 
     public HttpClient Http => http;
 
+    public string? AccessToken { get; private set; }
+
+    public void UseToken(string token)
+    {
+        AccessToken = token;
+        http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
+
     public async Task SignInAsync(string username, string password)
     {
         var response = await RequestTokenAsync(username, password);
         response.EnsureSuccessStatusCode();
         var token = await ReadAsync<TokenDto>(response);
-        http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+        UseToken(token.AccessToken);
     }
 
     public Task<HttpResponseMessage> RequestTokenAsync(string username, string password) =>
