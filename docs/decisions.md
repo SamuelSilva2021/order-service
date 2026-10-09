@@ -16,6 +16,8 @@ Api ──► Infrastructure ──► Application ──► Domain
 
 A complexidade foi mantida baixa de propósito: **um caso de uso por classe** chamado direto pelo controller, sem MediatR, sem pipeline de behaviors e sem AutoMapper. Quem lê encontra o fluxo seguindo o código.
 
+**Organização de pastas na Application:** por feature primeiro (`Orders`, `Products`, `Auth`) e, dentro de cada uma, por papel do arquivo: `Requests` (entradas: comandos e consultas), `Dtos` (saídas), `UseCases`, `Validators` e, quando existe, `Services`. O código de uma feature fica agrupado, e o nome da pasta já diz o papel de cada arquivo. O namespace acompanha a pasta, e a mesma convenção vale para as três features.
+
 ## Modelo de domínio
 
 - `Order` é o aggregate root. Itens só entram na criação (`Order.Place`), então não há como violar o total depois. O total é calculado uma vez e persistido, para evitar somar itens em toda listagem.

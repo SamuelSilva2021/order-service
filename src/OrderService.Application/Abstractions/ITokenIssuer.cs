@@ -1,4 +1,5 @@
 using OrderService.Application.Auth;
+using OrderService.Application.Auth.Dtos;
 
 namespace OrderService.Application.Abstractions;
 

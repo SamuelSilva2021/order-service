@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrderService.Application.Common;
-using OrderService.Application.Orders;
+using OrderService.Application.Orders.Dtos;
+using OrderService.Application.Orders.Requests;
+using OrderService.Application.Orders.UseCases;
 
 namespace OrderService.Api.Controllers;
 

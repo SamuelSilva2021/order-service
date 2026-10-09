@@ -1,7 +1,8 @@
 using NSubstitute;
 using OrderService.Application.Abstractions;
 using OrderService.Application.Common;
-using OrderService.Application.Orders;
+using OrderService.Application.Orders.Services;
+using OrderService.Application.Orders.UseCases;
 using OrderService.Application.Tests.Support;
 using OrderService.Domain.Orders;
 using OrderService.Domain.Products;

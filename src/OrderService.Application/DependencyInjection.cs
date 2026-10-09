@@ -1,8 +1,10 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using OrderService.Application.Auth;
-using OrderService.Application.Orders;
-using OrderService.Application.Products;
+using OrderService.Application.Auth.UseCases;
+using OrderService.Application.Orders.Services;
+using OrderService.Application.Orders.UseCases;
+using OrderService.Application.Orders.Validators;
+using OrderService.Application.Products.UseCases;
 
 namespace OrderService.Application;
 

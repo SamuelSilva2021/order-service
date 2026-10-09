@@ -1,5 +1,6 @@
 using OrderService.Application.Common;
-using OrderService.Application.Products;
+using OrderService.Application.Products.Dtos;
+using OrderService.Application.Products.Requests;
 
 namespace OrderService.Application.Abstractions;
 

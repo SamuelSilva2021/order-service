@@ -1,5 +1,5 @@
 using OrderService.Application.Common;
-using OrderService.Application.Orders;
+using OrderService.Application.Orders.Services;
 using OrderService.Application.Tests.Support;
 
 namespace OrderService.Application.Tests.Orders;

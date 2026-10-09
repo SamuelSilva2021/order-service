@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using OrderService.Application.Abstractions;
 using OrderService.Application.Auth;
+using OrderService.Application.Auth.Dtos;
 
 namespace OrderService.Infrastructure.Auth;
 

@@ -1,6 +1,6 @@
 using System.Net;
 using OrderService.Api.IntegrationTests.Support;
-using OrderService.Application.Orders;
+using OrderService.Application.Orders.Dtos;
 using OrderService.Domain.Orders;
 
 namespace OrderService.Api.IntegrationTests;

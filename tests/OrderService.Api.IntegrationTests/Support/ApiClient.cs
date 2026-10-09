@@ -2,10 +2,13 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using OrderService.Application.Auth;
+using OrderService.Application.Auth.Dtos;
+using OrderService.Application.Auth.Requests;
 using OrderService.Application.Common;
-using OrderService.Application.Orders;
-using OrderService.Application.Products;
+using OrderService.Application.Orders.Dtos;
+using OrderService.Application.Orders.Requests;
+using OrderService.Application.Products.Dtos;
+using OrderService.Application.Products.Requests;
 using OrderService.Domain.Orders;
 
 namespace OrderService.Api.IntegrationTests.Support;

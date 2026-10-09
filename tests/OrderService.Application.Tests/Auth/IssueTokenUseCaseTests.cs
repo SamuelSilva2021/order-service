@@ -2,6 +2,10 @@ using FluentValidation;
 using NSubstitute;
 using OrderService.Application.Abstractions;
 using OrderService.Application.Auth;
+using OrderService.Application.Auth.Dtos;
+using OrderService.Application.Auth.Requests;
+using OrderService.Application.Auth.UseCases;
+using OrderService.Application.Auth.Validators;
 using OrderService.Domain.Users;
 
 namespace OrderService.Application.Tests.Auth;
