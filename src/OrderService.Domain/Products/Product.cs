@@ -25,17 +25,17 @@ public sealed class Product
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new DomainException("Product name is required.");
+            throw new DomainException("O nome do produto é obrigatório.");
         }
 
         if (unitPrice <= 0)
         {
-            throw new DomainException("Unit price must be greater than zero.");
+            throw new DomainException("O preço unitário deve ser maior que zero.");
         }
 
         if (availableQuantity < 0)
         {
-            throw new DomainException("Available quantity cannot be negative.");
+            throw new DomainException("A quantidade disponível não pode ser negativa.");
         }
 
         return new Product
@@ -52,7 +52,7 @@ public sealed class Product
     {
         if (orderCurrency != Currency)
         {
-            throw new DomainException($"Product {Id} is priced in {Currency}, not in {orderCurrency}.");
+            throw new DomainException($"O produto {Id} é precificado em {Currency}, e não em {orderCurrency}.");
         }
 
         EnsureCanFulfill(quantity);
@@ -70,7 +70,7 @@ public sealed class Product
     {
         if (quantity <= 0)
         {
-            throw new DomainException("Quantity must be greater than zero.");
+            throw new DomainException("A quantidade deve ser maior que zero.");
         }
 
         AvailableQuantity += quantity;

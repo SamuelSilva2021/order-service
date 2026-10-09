@@ -26,17 +26,17 @@ public sealed class User
     {
         if (string.IsNullOrWhiteSpace(username))
         {
-            throw new DomainException("Username is required.");
+            throw new DomainException("O nome de usuário é obrigatório.");
         }
 
         if (string.IsNullOrWhiteSpace(passwordHash))
         {
-            throw new DomainException("Password hash is required.");
+            throw new DomainException("O hash da senha é obrigatório.");
         }
 
         if (role == UserRole.Customer && string.IsNullOrWhiteSpace(customerId))
         {
-            throw new DomainException("A customer user must be linked to a customer id.");
+            throw new DomainException("Um usuário do tipo Customer deve estar vinculado a um customerId.");
         }
 
         return new User

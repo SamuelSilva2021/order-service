@@ -12,17 +12,17 @@ public sealed class OrderItem
     {
         if (productId == Guid.Empty)
         {
-            throw new DomainException("Order item must reference a product.");
+            throw new DomainException("O item do pedido deve referenciar um produto.");
         }
 
         if (unitPrice < 0)
         {
-            throw new DomainException("Unit price cannot be negative.");
+            throw new DomainException("O preço unitário não pode ser negativo.");
         }
 
         if (quantity <= 0)
         {
-            throw new DomainException("Quantity must be greater than zero.");
+            throw new DomainException("A quantidade deve ser maior que zero.");
         }
 
         ProductId = productId;

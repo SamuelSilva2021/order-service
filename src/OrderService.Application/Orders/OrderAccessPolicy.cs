@@ -1,6 +1,5 @@
 using OrderService.Application.Abstractions;
 using OrderService.Application.Common;
-using OrderService.Domain.Orders;
 
 namespace OrderService.Application.Orders;
 
@@ -9,35 +8,25 @@ public sealed class OrderAccessPolicy(ICurrentUser user)
     public void EnsureCanPlaceFor(string customerId)
     {
         if (!CanAccess(customerId))
-        {
-            throw new ForbiddenException("You can only place orders for your own customer id.");
-        }
+            throw new ForbiddenException("Você só pode criar pedidos para o seu próprio cliente.");
     }
 
     public void EnsureCanAccess(string customerId, Guid orderId)
     {
         if (!CanAccess(customerId))
-        {
-            throw new NotFoundException(nameof(Order), orderId);
-        }
+            throw new NotFoundException("Pedido", orderId);
     }
 
     public string? ResolveCustomerFilter(string? requestedCustomerId)
     {
         if (user.IsAdmin)
-        {
             return requestedCustomerId;
-        }
 
         if (string.IsNullOrWhiteSpace(requestedCustomerId))
-        {
             return user.CustomerId;
-        }
 
         if (!CanAccess(requestedCustomerId))
-        {
-            throw new ForbiddenException("You can only list your own orders.");
-        }
+            throw new ForbiddenException("Você só pode listar os seus próprios pedidos.");
 
         return user.CustomerId;
     }

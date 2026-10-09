@@ -32,19 +32,19 @@ public sealed class Order
     {
         if (string.IsNullOrWhiteSpace(customerId))
         {
-            throw new DomainException("Customer is required.");
+            throw new DomainException("O cliente é obrigatório.");
         }
 
         var orderItems = items.ToList();
 
         if (orderItems.Count == 0)
         {
-            throw new DomainException("An order must have at least one item.");
+            throw new DomainException("O pedido deve ter ao menos um item.");
         }
 
         if (orderItems.Select(item => item.ProductId).Distinct().Count() != orderItems.Count)
         {
-            throw new DomainException("An order cannot contain the same product more than once.");
+            throw new DomainException("O pedido não pode conter o mesmo produto mais de uma vez.");
         }
 
         var order = new Order

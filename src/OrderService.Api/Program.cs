@@ -14,6 +14,7 @@ builder.Services
     .AddJwtAuthentication()
     .AddSwaggerWithJwt()
     .AddProblemDetails()
+    .AddPortugueseMessages()
     .AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services

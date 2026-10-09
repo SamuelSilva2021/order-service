@@ -40,7 +40,7 @@ public sealed class CreateOrderUseCase(
 
         if (missing.Count > 0)
         {
-            var failure = new ValidationFailure("items", $"Unknown product(s): {string.Join(", ", missing)}.");
+            var failure = new ValidationFailure("items", $"Produto(s) inexistente(s): {string.Join(", ", missing)}.");
             throw new ValidationException([failure]);
         }
     }

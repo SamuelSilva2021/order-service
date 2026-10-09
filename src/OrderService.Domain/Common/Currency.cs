@@ -12,7 +12,7 @@ public sealed record Currency
 
         if (normalized is not { Length: 3 } || !normalized.All(char.IsAsciiLetter))
         {
-            throw new DomainException("Currency must be a three-letter ISO 4217 code.");
+            throw new DomainException("A moeda deve ser um código ISO 4217 de três letras.");
         }
 
         return new Currency(normalized);
