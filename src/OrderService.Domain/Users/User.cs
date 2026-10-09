@@ -1,0 +1,51 @@
+using OrderService.Domain.Common;
+
+namespace OrderService.Domain.Users;
+
+public sealed class User
+{
+    private User()
+    {
+        Username = string.Empty;
+        PasswordHash = string.Empty;
+    }
+
+    public Guid Id { get; private set; }
+
+    public string Username { get; private set; }
+
+    public string PasswordHash { get; private set; }
+
+    public UserRole Role { get; private set; }
+
+    public string? CustomerId { get; private set; }
+
+    public static string NormalizeUsername(string username) => username.Trim().ToLowerInvariant();
+
+    public static User Create(string username, string passwordHash, UserRole role, string? customerId)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            throw new DomainException("Username is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(passwordHash))
+        {
+            throw new DomainException("Password hash is required.");
+        }
+
+        if (role == UserRole.Customer && string.IsNullOrWhiteSpace(customerId))
+        {
+            throw new DomainException("A customer user must be linked to a customer id.");
+        }
+
+        return new User
+        {
+            Id = Guid.NewGuid(),
+            Username = NormalizeUsername(username),
+            PasswordHash = passwordHash,
+            Role = role,
+            CustomerId = string.IsNullOrWhiteSpace(customerId) ? null : customerId.Trim()
+        };
+    }
+}

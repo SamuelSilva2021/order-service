@@ -4,9 +4,15 @@ using OrderService.Domain.Orders;
 
 namespace OrderService.Application.Orders;
 
-public sealed class GetOrderUseCase(IOrderQueries queries)
+public sealed class GetOrderUseCase(IOrderQueries queries, OrderAccessPolicy access)
 {
-    public async Task<OrderDto> ExecuteAsync(Guid orderId, CancellationToken cancellationToken) =>
-        await queries.GetByIdAsync(orderId, cancellationToken)
+    public async Task<OrderDto> ExecuteAsync(Guid orderId, CancellationToken cancellationToken)
+    {
+        var order = await queries.GetByIdAsync(orderId, cancellationToken)
             ?? throw new NotFoundException(nameof(Order), orderId);
+
+        access.EnsureCanAccess(order.CustomerId, orderId);
+
+        return order;
+    }
 }

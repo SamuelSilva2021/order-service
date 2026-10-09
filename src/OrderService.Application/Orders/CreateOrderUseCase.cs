@@ -11,11 +11,13 @@ public sealed class CreateOrderUseCase(
     IProductRepository products,
     IUnitOfWork unitOfWork,
     IValidator<CreateOrderCommand> validator,
+    OrderAccessPolicy access,
     TimeProvider clock)
 {
     public async Task<OrderDto> ExecuteAsync(CreateOrderCommand command, CancellationToken cancellationToken)
     {
         await validator.ValidateAndThrowAsync(command, cancellationToken);
+        access.EnsureCanPlaceFor(command.CustomerId);
 
         var currency = Currency.Of(command.Currency);
         var productIds = command.Items.Select(item => item.ProductId).ToList();

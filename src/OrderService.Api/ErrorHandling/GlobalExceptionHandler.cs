@@ -40,6 +40,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         },
         NotFoundException => Problem(StatusCodes.Status404NotFound, "Resource not found.", exception),
         InvalidCredentialsException => Problem(StatusCodes.Status401Unauthorized, "Unauthorized.", exception),
+        ForbiddenException => Problem(StatusCodes.Status403Forbidden, "Forbidden.", exception),
         InsufficientStockException or InvalidOrderTransitionException or ConcurrencyConflictException =>
             Problem(StatusCodes.Status409Conflict, "Conflict.", exception),
         DomainException => Problem(StatusCodes.Status422UnprocessableEntity, "Business rule violated.", exception),

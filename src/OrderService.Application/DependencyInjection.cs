@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddValidatorsFromAssemblyContaining<CreateOrderValidator>(lifetime: ServiceLifetime.Singleton);
 
         services.AddScoped<OrderStockService>();
+        services.AddScoped<OrderAccessPolicy>();
         services.AddScoped<CreateOrderUseCase>();
         services.AddScoped<ConfirmOrderUseCase>();
         services.AddScoped<CancelOrderUseCase>();

@@ -31,10 +31,9 @@ public static class DependencyInjection
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddOptions<ConfiguredUsersOptions>().BindConfiguration(ConfiguredUsersOptions.SectionName);
-
         services.AddSingleton<ITokenIssuer, JwtTokenIssuer>();
-        services.AddSingleton<IUserStore, ConfiguredUserStore>();
+        services.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }

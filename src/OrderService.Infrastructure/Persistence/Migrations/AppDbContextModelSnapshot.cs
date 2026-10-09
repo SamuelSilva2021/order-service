@@ -146,6 +146,64 @@ namespace OrderService.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("OrderService.Domain.Users.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CustomerId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            PasswordHash = "v1.600000.v/1H6x41FXYgiPv5Z5WXWQ==.abEgtNOuCopuMywr7rZs8javnZMEYJFhmLW7QGkiiV4=",
+                            Role = "Admin",
+                            Username = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                            CustomerId = "customer-001",
+                            PasswordHash = "v1.600000.Wth+s2v7HS1WrnlrNZN8Rg==.zxUtdxcycvnbOfhqX9BGTeoav9Q4rX7DyrCC2w8wL0M=",
+                            Role = "Customer",
+                            Username = "customer"
+                        },
+                        new
+                        {
+                            Id = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                            CustomerId = "customer-002",
+                            PasswordHash = "v1.600000.nmEmoJon3mBxxOuPr8boFg==.6bAC2WWeOxYuuQcnBasJkWrYkq1yW+UrwWBpW0z0+Ko=",
+                            Role = "Customer",
+                            Username = "customer2"
+                        });
+                });
+
             modelBuilder.Entity("OrderService.Domain.Orders.Order", b =>
                 {
                     b.OwnsMany("OrderService.Domain.Orders.OrderItem", "Items", b1 =>
