@@ -31,21 +31,15 @@ public sealed class Order
     public static Order Place(string customerId, Currency currency, IEnumerable<OrderItem> items, DateTimeOffset createdAt)
     {
         if (string.IsNullOrWhiteSpace(customerId))
-        {
             throw new DomainException("O cliente é obrigatório.");
-        }
 
         var orderItems = items.ToList();
 
         if (orderItems.Count == 0)
-        {
             throw new DomainException("O pedido deve ter ao menos um item.");
-        }
 
         if (orderItems.Select(item => item.ProductId).Distinct().Count() != orderItems.Count)
-        {
             throw new DomainException("O pedido não pode conter o mesmo produto mais de uma vez.");
-        }
 
         var order = new Order
         {
@@ -64,15 +58,11 @@ public sealed class Order
 
     public bool Confirm()
     {
-        if (Status == OrderStatus.Confirmed)
-        {
+        if (Status == OrderStatus.Confirmed) 
             return false;
-        }
 
         if (Status != OrderStatus.Placed)
-        {
             throw new InvalidOrderTransitionException(Id, Status, OrderStatus.Confirmed);
-        }
 
         Status = OrderStatus.Confirmed;
         return true;
@@ -81,14 +71,11 @@ public sealed class Order
     public bool Cancel()
     {
         if (Status == OrderStatus.Canceled)
-        {
             return false;
-        }
+
 
         if (Status is not (OrderStatus.Placed or OrderStatus.Confirmed))
-        {
             throw new InvalidOrderTransitionException(Id, Status, OrderStatus.Canceled);
-        }
 
         Status = OrderStatus.Canceled;
         return true;

@@ -22,9 +22,7 @@ public sealed class CancelOrderCommandHandler(
         if (order.Cancel())
         {
             if (releasesStock)
-            {
                 await stock.ReleaseAsync(order, cancellationToken);
-            }
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
         }

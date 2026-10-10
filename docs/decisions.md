@@ -55,7 +55,7 @@ Application/
 | Cancelar pedido `Confirmed` | Devolve (`Release`) |
 | Cancelar pedido `Placed` | Nada a devolver |
 
-Reservar só na confirmação segue o enunciado ("confirmação deve reservar/baixar estoque") e evita que pedidos abandonados em `Placed` prendam estoque. A contrapartida é que a confirmação pode falhar se o estoque acabou depois da criação: nesse caso a API devolve 409 e o pedido continua `Placed`.
+Reservar só na confirmação por questões de simplicidade, já que um pedido não confirmado não tem como impactar o negócio, e evita que pedidos abandonados em `Placed` prendam estoque. A contrapartida é que a confirmação pode falhar se o estoque acabou depois da criação: nesse caso a API devolve 409 e o pedido continua `Placed`.
 
 `Order.HoldsStock` (verdadeiro só em `Confirmed`) deixa explícito para o handler de cancelamento quando há estoque a devolver.
 
