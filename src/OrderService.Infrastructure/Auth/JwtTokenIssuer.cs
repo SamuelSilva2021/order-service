@@ -40,6 +40,6 @@ public sealed class JwtTokenIssuer(IOptions<JwtOptions> options, TimeProvider cl
                 SecurityAlgorithms.HmacSha256)
         };
 
-        return new TokenDto(new JsonWebTokenHandler().CreateToken(descriptor), expiresAt);
+        return new TokenDto(new JsonWebTokenHandler().CreateToken(descriptor), expiresAt, user);
     }
 }

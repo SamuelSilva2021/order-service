@@ -30,6 +30,21 @@ public class AuthAndAuthorizationTests(ApiFixture fixture)
     }
 
     [Theory]
+    [InlineData("admin", "admin123", "Admin", null)]
+    [InlineData("customer", "customer123", "Customer", ApiFixture.CustomerOneId)]
+    [InlineData("customer2", "customer123", "Customer", ApiFixture.CustomerTwoId)]
+    public async Task IssueToken_ReturnsTheAuthenticatedUserIdentity(
+        string username, string password, string expectedRole, string? expectedCustomerId)
+    {
+        var response = await fixture.CreateAnonymous().RequestTokenAsync(username, password);
+
+        var token = await ApiClient.ReadAsync<TokenDto>(response);
+        Assert.Equal(username, token.User.Username);
+        Assert.Equal(expectedRole, token.User.Role);
+        Assert.Equal(expectedCustomerId, token.User.CustomerId);
+    }
+
+    [Theory]
     [InlineData("admin", "wrong")]
     [InlineData("ghost", "admin123")]
     public async Task IssueToken_InvalidCredentials_ReturnsUnauthorized(string username, string password)

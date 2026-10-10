@@ -17,7 +17,7 @@ public class IssueTokenCommandHandlerTests
     public IssueTokenCommandHandlerTests()
     {
         handler = new IssueTokenCommandHandler(users, hasher, tokens, new IssueTokenCommandValidator());
-        tokens.Issue(Arg.Any<AuthenticatedUser>()).Returns(new TokenDto("jwt", DateTimeOffset.UtcNow.AddHours(1)));
+        tokens.Issue(Arg.Any<AuthenticatedUser>()).Returns(call => new TokenDto("jwt", DateTimeOffset.UtcNow.AddHours(1), call.Arg<AuthenticatedUser>()));
     }
 
     private void Stored(User user) =>
@@ -33,6 +33,7 @@ public class IssueTokenCommandHandlerTests
         var token = await handler.HandleAsync(new IssueTokenCommand("maria", "secret"), CancellationToken.None);
 
         Assert.Equal("jwt", token.AccessToken);
+        Assert.Equal("customer-7", token.User.CustomerId);
         tokens.Received(1).Issue(Arg.Is<AuthenticatedUser>(u =>
             u.Username == "maria" && u.Role == "Customer" && u.CustomerId == "customer-7"));
     }

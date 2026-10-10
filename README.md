@@ -57,6 +57,13 @@ Usuários de demonstração (tabela `users`, criados pela migration com a senha 
 | `customer` | `customer123` | Customer | Pedidos do cliente `customer-001` e consulta de produtos |
 | `customer2` | `customer123` | Customer | Pedidos do cliente `customer-002` e consulta de produtos |
 
+A resposta do login já informa quem você é, inclusive o `customerId` que deve ser usado ao criar pedidos:
+
+```json
+{ "accessToken": "...", "expiresAt": "...",
+  "user": { "username": "customer", "role": "Customer", "customerId": "customer-001" } }
+```
+
 O token traz o perfil e, para clientes, a claim `customer_id`. Um **Customer** só cria pedidos para o seu próprio `customerId` (403 caso contrário), só enxerga, confirma e cancela os seus pedidos (404 nos de outros) e a listagem é sempre restrita aos seus pedidos. O **Admin** age em nome de qualquer cliente.
 
 Produtos do seed:
