@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrderService.Application.Auth.Dtos;
-using OrderService.Application.Auth.Requests;
-using OrderService.Application.Auth.UseCases;
+using OrderService.Application.Auth.Commands.IssueToken;
+using OrderService.Application.Auth.Common;
 
 namespace OrderService.Api.Controllers;
 
@@ -14,7 +13,7 @@ public sealed class AuthController : ControllerBase
     [HttpPost("token")]
     public async Task<ActionResult<TokenDto>> IssueToken(
         [FromBody] IssueTokenCommand command,
-        [FromServices] IssueTokenUseCase useCase,
+        [FromServices] IssueTokenCommandHandler handler,
         CancellationToken cancellationToken) =>
-        Ok(await useCase.ExecuteAsync(command, cancellationToken));
+        Ok(await handler.HandleAsync(command, cancellationToken));
 }

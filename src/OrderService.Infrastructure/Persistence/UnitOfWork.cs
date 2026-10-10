@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using OrderService.Application.Abstractions;
-using OrderService.Application.Common;
+using OrderService.Application.Common.Exceptions;
+using OrderService.Application.Common.Interfaces;
 
 namespace OrderService.Infrastructure.Persistence;
 

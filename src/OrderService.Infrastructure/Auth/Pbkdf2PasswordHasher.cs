@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using OrderService.Application.Abstractions;
+using OrderService.Application.Common.Interfaces;
 
 namespace OrderService.Infrastructure.Auth;
 

@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrderService.Application.Auth;
-using OrderService.Application.Common;
-using OrderService.Application.Products.Dtos;
-using OrderService.Application.Products.Requests;
-using OrderService.Application.Products.UseCases;
+using OrderService.Application.Common.Models;
+using OrderService.Application.Common.Security;
+using OrderService.Application.Products.Commands.CreateProduct;
+using OrderService.Application.Products.Common;
+using OrderService.Application.Products.Queries.ListProducts;
 
 namespace OrderService.Api.Controllers;
 
@@ -17,10 +17,10 @@ public sealed class ProductsController : ControllerBase
     [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<ProductDto>> Create(
         [FromBody] CreateProductCommand command,
-        [FromServices] CreateProductUseCase useCase,
+        [FromServices] CreateProductCommandHandler handler,
         CancellationToken cancellationToken)
     {
-        var product = await useCase.ExecuteAsync(command, cancellationToken);
+        var product = await handler.HandleAsync(command, cancellationToken);
 
         return Created($"/products/{product.Id}", product);
     }
@@ -28,7 +28,7 @@ public sealed class ProductsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedResult<ProductDto>>> List(
         [FromQuery] ListProductsQuery query,
-        [FromServices] ListProductsUseCase useCase,
+        [FromServices] ListProductsQueryHandler handler,
         CancellationToken cancellationToken) =>
-        Ok(await useCase.ExecuteAsync(query, cancellationToken));
+        Ok(await handler.HandleAsync(query, cancellationToken));
 }

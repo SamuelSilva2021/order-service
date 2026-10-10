@@ -1,8 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using OrderService.Application.Auth;
-using OrderService.Application.Common;
+using OrderService.Application.Auth.Common;
+using OrderService.Application.Common.Exceptions;
 using OrderService.Domain.Common;
 using OrderService.Domain.Orders;
 using OrderService.Domain.Products;

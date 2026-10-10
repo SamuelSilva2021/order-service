@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OrderService.Application.Abstractions;
+using OrderService.Application.Common.Interfaces;
 using OrderService.Infrastructure.Auth;
 using OrderService.Infrastructure.Persistence;
 using OrderService.Infrastructure.Persistence.Queries;

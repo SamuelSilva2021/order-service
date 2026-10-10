@@ -1,7 +1,8 @@
 using System.Net;
 using OrderService.Api.IntegrationTests.Support;
-using OrderService.Application.Common;
-using OrderService.Application.Orders.Dtos;
+using OrderService.Application.Common.Models;
+using OrderService.Application.Orders.Common;
+using OrderService.Application.Orders.Queries.ListOrders;
 using OrderService.Domain.Orders;
 
 namespace OrderService.Api.IntegrationTests;

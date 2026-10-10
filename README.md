@@ -42,7 +42,7 @@ dotnet test
 | Projeto | O que cobre |
 |---|---|
 | `OrderService.Domain.Tests` | Invariantes e transições de `Order`, `OrderItem`, `Product`, `Currency` e `User` |
-| `OrderService.Application.Tests` | Casos de uso (pedidos e login) e regra de posse por cliente, com dependências substituídas |
+| `OrderService.Application.Tests` | Handlers (pedidos e login) e regra de posse por cliente, com dependências substituídas |
 | `OrderService.Api.IntegrationTests` | API completa contra um PostgreSQL real (Testcontainers), incluindo JWT, posse por cliente, idempotência, concorrência e o hasher de senha |
 
 Os testes de integração precisam do **Docker em execução**: eles sobem um container PostgreSQL descartável.
@@ -111,7 +111,7 @@ Erros seguem o formato `application/problem+json`, com títulos e mensagens em p
 ```
 src/
   OrderService.Domain          Entidades, value object e regras de negócio (sem dependências)
-  OrderService.Application     Casos de uso, DTOs, validações e contratos (portas)
+  OrderService.Application     Comandos, consultas e handlers por feature, validações e contratos (portas)
   OrderService.Infrastructure  EF Core, migrations, repositórios, queries e JWT
   OrderService.Api             Controllers, autenticação, tratamento de erros e Swagger
 tests/

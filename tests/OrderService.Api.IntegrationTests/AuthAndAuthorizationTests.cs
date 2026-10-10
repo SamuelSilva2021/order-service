@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using OrderService.Api.IntegrationTests.Support;
-using OrderService.Application.Auth.Dtos;
+using OrderService.Application.Auth.Common;
 
 namespace OrderService.Api.IntegrationTests;
 

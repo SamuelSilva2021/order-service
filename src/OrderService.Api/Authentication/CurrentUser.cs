@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using OrderService.Application.Abstractions;
-using OrderService.Application.Auth;
+using OrderService.Application.Common.Interfaces;
+using OrderService.Application.Common.Security;
 using OrderService.Infrastructure.Auth;
 
 namespace OrderService.Api.Authentication;

@@ -10,13 +10,31 @@ Api ──► Infrastructure ──► Application ──► Domain
 ```
 
 - **Domain** não depende de nada. Concentra invariantes e transições de estado.
-- **Application** define os casos de uso e as portas (`IOrderRepository`, `IOrderQueries`, `IUnitOfWork`, ...). Não conhece EF Core.
+- **Application** define os comandos, consultas e handlers e as portas (`IOrderRepository`, `IOrderQueries`, `IUnitOfWork`, ...). Não conhece EF Core.
 - **Infrastructure** implementa as portas: EF Core, JWT, usuários.
-- **Api** só traduz HTTP para casos de uso e erros para `ProblemDetails`.
+- **Api** só traduz HTTP para comandos e consultas e erros para `ProblemDetails`.
 
-A complexidade foi mantida baixa de propósito: **um caso de uso por classe** chamado direto pelo controller, sem MediatR, sem pipeline de behaviors e sem AutoMapper. Quem lê encontra o fluxo seguindo o código.
+A complexidade foi mantida baixa de propósito: cada operação é um **comando** (escrita) ou uma **consulta** (leitura), tratado por **um handler por classe** que o controller chama direto. Não há mediador, pipeline de behaviors nem AutoMapper: quem lê encontra o fluxo seguindo o código. O MediatR foi descartado também por exigir hoje uma chave de licença.
 
-**Organização de pastas na Application:** por feature primeiro (`Orders`, `Products`, `Auth`) e, dentro de cada uma, por papel do arquivo: `Requests` (entradas: comandos e consultas), `Dtos` (saídas), `UseCases`, `Validators` e, quando existe, `Services`. O código de uma feature fica agrupado, e o nome da pasta já diz o papel de cada arquivo. O namespace acompanha a pasta, e a mesma convenção vale para as três features.
+**Organização de pastas na Application:** segue o padrão dos projetos de referência em Clean Architecture para .NET mais recente, como os de Jason Taylor **feature → `Commands`/`Queries` → uma pasta por operação**. O que muda junto fica junto:
+
+```
+Application/
+  Common/                      Interfaces (portas), Exceptions, Models, Security: o que é compartilhado por todas as features
+  Orders/
+    Commands/CreateOrder/      CreateOrderCommand, CreateOrderItemCommand, CreateOrderCommandValidator, CreateOrderCommandHandler
+    Commands/ConfirmOrder/     ConfirmOrderCommand, ConfirmOrderCommandHandler
+    Commands/CancelOrder/      CancelOrderCommand, CancelOrderCommandHandler
+    Queries/GetOrder/          GetOrderQuery, GetOrderQueryHandler
+    Queries/ListOrders/        ListOrdersQuery, ListOrdersQueryValidator, ListOrdersQueryHandler, OrderSummaryDto
+    Common/                    OrderDto, OrderItemDto, OrderAccessPolicy, OrderStockService: usados por mais de uma operação
+  Products/ , Auth/            mesma convenção
+```
+
+- O DTO de uma única consulta fica na pasta dela (`OrderSummaryDto`); o usado por várias operações vai para o `Common` da feature (`OrderDto`).
+- Só existe validador onde há o que validar: confirmar e cancelar recebem apenas um id.
+- O namespace acompanha a pasta, e os testes da Application espelham a mesma árvore.
+- Nas demais camadas: o Domain agrupa por agregado, como nos exemplos de Mantinband e Ardalis (`Orders`, `Products`, `Users`), a Infrastructure separa `Persistence` (configurações, repositórios, queries, migrations) de `Auth`, e a Api tem `Controllers`.
 
 ## Modelo de domínio
 
@@ -39,14 +57,14 @@ A complexidade foi mantida baixa de propósito: **um caso de uso por classe** ch
 
 Reservar só na confirmação segue o enunciado ("confirmação deve reservar/baixar estoque") e evita que pedidos abandonados em `Placed` prendam estoque. A contrapartida é que a confirmação pode falhar se o estoque acabou depois da criação: nesse caso a API devolve 409 e o pedido continua `Placed`.
 
-`Order.HoldsStock` (verdadeiro só em `Confirmed`) deixa explícito para o caso de uso de cancelamento quando há estoque a devolver.
+`Order.HoldsStock` (verdadeiro só em `Confirmed`) deixa explícito para o handler de cancelamento quando há estoque a devolver.
 
 ## Idempotência
 
 Resolvida pelo **próprio estado do agregado**, sem `Idempotency-Key`:
 
 - `Order.Confirm()` e `Order.Cancel()` retornam `false` quando o pedido já está no estado alvo.
-- O caso de uso só mexe no estoque e salva quando houve mudança real.
+- O handler só mexe no estoque e salva quando houve mudança real.
 - Chamar duas vezes devolve 200 com o mesmo pedido, e o estoque é ajustado uma única vez.
 
 Uma `Idempotency-Key` seria necessária para operações não naturalmente idempotentes (como `POST /orders`), que está fora do escopo do enunciado.
@@ -135,7 +153,7 @@ Pontos de projeto:
 ## Testes
 
 - **Domain**: invariantes, transições, idempotência do agregado, estoque.
-- **Application**: fluxos dos casos de uso com repositórios substituídos (NSubstitute), incluindo "chamar duas vezes só ajusta o estoque uma vez".
+- **Application**: fluxos dos handlers com repositórios substituídos (NSubstitute), incluindo "chamar duas vezes só ajusta o estoque uma vez".
 - **Integração**: API real + PostgreSQL real (Testcontainers) para validar o que mocks não cobrem: tradução das queries, migrations, JWT, `xmin` e concorrência.
 
 ## Fora de escopo (conscientemente)

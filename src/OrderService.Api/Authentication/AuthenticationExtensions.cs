@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
-using OrderService.Application.Abstractions;
+using OrderService.Application.Common.Interfaces;
 
 namespace OrderService.Api.Authentication;
 

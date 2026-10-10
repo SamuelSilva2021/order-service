@@ -3,9 +3,8 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using OrderService.Application.Abstractions;
-using OrderService.Application.Auth;
-using OrderService.Application.Auth.Dtos;
+using OrderService.Application.Auth.Common;
+using OrderService.Application.Common.Interfaces;
 
 namespace OrderService.Infrastructure.Auth;
 

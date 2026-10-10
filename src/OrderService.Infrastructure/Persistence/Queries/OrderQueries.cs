@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using OrderService.Application.Abstractions;
-using OrderService.Application.Common;
-using OrderService.Application.Orders.Dtos;
-using OrderService.Application.Orders.Requests;
+using OrderService.Application.Common.Interfaces;
+using OrderService.Application.Common.Models;
+using OrderService.Application.Orders.Common;
+using OrderService.Application.Orders.Queries.ListOrders;
 using OrderService.Domain.Orders;
 
 namespace OrderService.Infrastructure.Persistence.Queries;
