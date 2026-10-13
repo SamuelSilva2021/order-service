@@ -33,6 +33,25 @@ Para usar outro PostgreSQL (por exemplo, um instalado na sua máquina) sem alter
 dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5432;Database=meu_banco;Username=postgres;Password=sua_senha" --project src/OrderService.Api
 ```
 
+## Solução de problemas
+
+**`port is already allocated` ou `address already in use` ao rodar `docker compose up`.** Alguma porta do host já está ocupada. A mais comum é a **5432**, quando há um PostgreSQL instalado na máquina. Edite o `docker-compose.yml` e troque só o número da esquerda do mapeamento:
+
+| Serviço | Mapeamento original | Exemplo de troca | Acesso depois da troca |
+|---|---|---|---|
+| Banco | `"5432:5432"` | `"5433:5432"` | `localhost:5433` (pgAdmin, `dotnet run` local) |
+| API | `"8080:8080"` | `"8081:8080"` | http://localhost:8081/swagger |
+
+A API que roda dentro do compose continua falando com o banco pela rede interna (`db:5432`), então nada mais precisa mudar. Se você rodar a API fora do Docker com o banco na nova porta, informe-a pelos *user secrets*:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5433;Database=orderservice;Username=postgres;Password=postgres" --project src/OrderService.Api
+```
+
+**`Docker is either not running or misconfigured` ao rodar `dotnet test`.** Os testes de integração sobem um PostgreSQL descartável via Docker. Inicie o Docker (Docker Desktop) e rode `dotnet test` de novo.
+
+**A API do Docker não reflete uma mudança no código.** O `docker compose up` reaproveita a imagem antiga. Use `docker compose up --build`.
+
 ## Testes
 
 ```bash
@@ -89,16 +108,37 @@ Produtos do seed:
 | GET | `/orders/{id}` | Autenticado | Pedido com itens |
 | GET | `/orders?customerId=&status=&from=&to=&page=&pageSize=` | Autenticado | Lista paginada com filtros |
 
-### Exemplo com curl
+### Exemplos com curl
+
+**Como cliente** (usuário `customer`, que opera o `customerId` `customer-001`): criar, confirmar e consultar um pedido.
 
 ```bash
 TOKEN=$(curl -s -X POST http://localhost:8080/auth/token \
   -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"admin123"}' | sed -E 's/.*"accessToken":"([^"]+)".*/\1/')
+  -d '{"username":"customer","password":"customer123"}' | sed -E 's/.*"accessToken":"([^"]+)".*/\1/')
 
 curl -s -X POST http://localhost:8080/orders \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d '{"customerId":"c-1","currency":"BRL","items":[{"productId":"11111111-1111-1111-1111-111111111111","quantity":2}]}'
+  -d '{"customerId":"customer-001","currency":"BRL","items":[{"productId":"11111111-1111-1111-1111-111111111111","quantity":2}]}'
+```
+
+Use o `id` da resposta para confirmar e consultar (troque `<id>`):
+
+```bash
+curl -s -X POST http://localhost:8080/orders/<id>/confirm -H "Authorization: Bearer $TOKEN"
+curl -s http://localhost:8080/orders/<id> -H "Authorization: Bearer $TOKEN"
+```
+
+**Como administrador** (usuário `admin`): cadastrar um produto, operação que o `customer` não pode fazer (403).
+
+```bash
+ADMIN_TOKEN=$(curl -s -X POST http://localhost:8080/auth/token \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}' | sed -E 's/.*"accessToken":"([^"]+)".*/\1/')
+
+curl -s -X POST http://localhost:8080/products \
+  -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" \
+  -d '{"name":"Teclado Gamer","unitPrice":199.90,"currency":"BRL","availableQuantity":30}'
 ```
 
 ### Códigos de resposta
