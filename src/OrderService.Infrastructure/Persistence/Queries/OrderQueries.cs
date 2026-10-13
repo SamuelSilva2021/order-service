@@ -52,14 +52,10 @@ public sealed class OrderQueries(AppDbContext context) : IOrderQueries
     private static IQueryable<Order> Filter(IQueryable<Order> orders, ListOrdersQuery query)
     {
         if (!string.IsNullOrWhiteSpace(query.CustomerId))
-        {
             orders = orders.Where(order => order.CustomerId == query.CustomerId);
-        }
 
         if (query.Status is { } status)
-        {
             orders = orders.Where(order => order.Status == status);
-        }
 
         if (query.From is { } from)
         {
